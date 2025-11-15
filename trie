@@ -1,0 +1,97 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class TrieNode 
+{
+    public:
+    TrieNode* children[26];
+    bool isLeaf;
+    TrieNode() {
+        isLeaf = false;
+        for (int i = 0; i < 26; i++) {
+            children[i] = nullptr;
+        }
+    }
+};
+
+/*Word List
+bawl
+beautiful
+britain  [britn]   pg28
+caribbean
+chiquibul    pg 454
+committee    pg140
+government
+independence  [indi pen den ts]    pg36
+indigenous    [indi gi nous]    pg35
+jaguar
+jancrow   (Jancrow married to blackbird)
+mahogany
+mosquito    pg12
+sarstoon    pg354
+sovereignty   pg7
+Territory    pg7
+tourism
+*/
+void insert(TrieNode* root, const string& key) {
+    TrieNode* curr = root;
+    for(char c : key) {
+        if(curr->children[c-'a'] == nullptr)
+        {
+            TrieNode *newNode = new TrieNode();
+            curr->children[c - 'a'] = newNode;
+        }
+
+        curr = curr->children[c - 'a'];
+    }
+
+    curr->isLeaf = true;
+}
+
+bool search(TrieNode *root, const string &key){
+    if (root == nullptr)
+    {
+        return false;
+    }
+
+    TrieNode *curr = root;
+    for (char c : key)
+    {
+        if (curr->children[c - 'a'] == nullptr)
+            return false;
+
+        curr = curr->children[c - 'a'];
+    }
+
+    return curr->isLeaf;
+}
+
+int main() {
+    TrieNode* root = new TrieNode();
+
+    vector<string> words = {"bawl", "beautiful", "britain", "caribbean", "chiquibul",
+        "committee", "government", "independence", "indigenous", "jaguar", "jancrow", 
+        "mahogany", "mosquito", "sarstoon", "sovereignty", "territory", "tourism"};
+    for (const string& word : words) {
+        insert(root, word);
+    }
+
+
+    cout << search(root, "bawl") << endl;     
+    cout << search(root, "beautiful") << endl;
+    cout << search(root, "belize") << endl;  
+    cout << search(root, "mangrove") << endl;
+    
+
+    string guess;
+    cout<< "Enter word: ";
+    cin>> guess;
+    if (search(root, guess)) {
+        cout << "Correct spelling !!" << endl;
+    } else {
+        cout << "X  Wrong spelling  X" << endl;
+    }
+
+    return 0;
+}
